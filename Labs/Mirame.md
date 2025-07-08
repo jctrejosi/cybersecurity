@@ -255,4 +255,3 @@ permitted by applicable law.
 Last login: Sat Aug 10 19:44:14 2024 from 172.17.0.1
 carlos@d783ae2e7f36:~$ 
 ```
-
