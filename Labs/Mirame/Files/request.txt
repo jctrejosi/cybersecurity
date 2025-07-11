@@ -1,0 +1,9 @@
+POST /page.php HTTP/1.1
+Host: 172.17.0.2
+User-Agent: curl/7.88.1
+Accept: */*
+Content-Type: application/x-www-form-urlencoded
+Cookie: PHPSESSID=TU_SESSION_ID
+Content-Length: 13
+
+city=bogota

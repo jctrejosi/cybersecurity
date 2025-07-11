@@ -1,0 +1,5 @@
+# Nmap 7.97 scan initiated Mon Jul  7 16:40:31 2025 as: nmap -p- --open -sN -sV --min-rate 5000 -vvv -n -Pn -oG tcp_ports 172.17.0.2
+# Ports scanned: TCP(65535;1-65535) UDP(0;) SCTP(0;) PROTOCOLS(0;)
+Host: 172.17.0.2 ()	Status: Up
+Host: 172.17.0.2 ()	Ports: 22/open/tcp//ssh//OpenSSH 9.2p1 Debian 2+deb12u3 (protocol 2.0)/, 80/open/tcp//http//Apache httpd 2.4.61 ((Debian))/	Ignored State: closed (65533)
+# Nmap done at Mon Jul  7 16:40:37 2025 -- 1 IP address (1 host up) scanned in 6.80 seconds
