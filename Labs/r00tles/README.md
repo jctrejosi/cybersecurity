@@ -129,7 +129,10 @@ It may be that the file that is being uploaded is being uploaded in a .ssh/?
 ## 5. Creamos una clave ssh
 
 ```sh
-[juan@archlinux r00tless]$ ssh-keygen -t rsa -b 2048 -f id_rsa
+ssh-keygen -t rsa -b 2048 -f id_rsa
+```
+
+```sh
 Generating public/private rsa key pair.
 Enter passphrase for "id_rsa" (empty for no passphrase): 
 Enter same passphrase again: 
