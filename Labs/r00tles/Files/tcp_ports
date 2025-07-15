@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.97 scan initiated Mon Jul 14 20:48:56 2025 as: nmap -p- -&#45;open -sN -sV -vvv -n -Pn -oX tcp_ports 172.18.0.2 -->
+<nmaprun scanner="nmap" args="nmap -p- -&#45;open -sN -sV -vvv -n -Pn -oX tcp_ports 172.18.0.2" start="1752544136" startstr="Mon Jul 14 20:48:56 2025" version="7.97" xmloutputversion="1.05">
+<scaninfo type="null" protocol="tcp" numservices="65535" services="1-65535"/>
+<verbose level="3"/>
+<debugging level="0"/>
+<taskbegin task="ARP Ping Scan" time="1752544136"/>
+<hosthint><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="172.18.0.2" addrtype="ipv4"/>
+<address addr="02:4A:F6:DB:6E:6A" addrtype="mac"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<taskend task="ARP Ping Scan" time="1752544136" extrainfo="1 total hosts"/>
+<taskbegin task="NULL Scan" time="1752544136"/>
+<taskend task="NULL Scan" time="1752544137" extrainfo="65535 total ports"/>
+<taskbegin task="Service scan" time="1752544138"/>
+<taskend task="Service scan" time="1752544149" extrainfo="4 services on 1 host"/>
+<taskbegin task="NSE" time="1752544149"/>
+<taskend task="NSE" time="1752544149"/>
+<taskbegin task="NSE" time="1752544149"/>
+<taskend task="NSE" time="1752544149"/>
+<host starttime="1752544136" endtime="1752544149"><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="172.18.0.2" addrtype="ipv4"/>
+<address addr="02:4A:F6:DB:6E:6A" addrtype="mac"/>
+<hostnames>
+</hostnames>
+<ports><extraports state="closed" count="65531">
+<extrareasons reason="reset" count="65531" proto="tcp" ports="1-21,23-79,81-138,140-444,446-65535"/>
+</extraports>
+<port protocol="tcp" portid="22"><state state="open" reason="tcp-response" reason_ttl="0"/><service name="ssh" product="OpenSSH" version="9.6p1 Ubuntu 3ubuntu13.5" extrainfo="Ubuntu Linux; protocol 2.0" ostype="Linux" method="probed" conf="10"><cpe>cpe:/a:openbsd:openssh:9.6p1</cpe><cpe>cpe:/o:linux:linux_kernel</cpe></service></port>
+<port protocol="tcp" portid="80"><state state="open" reason="tcp-response" reason_ttl="0"/><service name="http" product="Apache httpd" version="2.4.58" extrainfo="(Ubuntu)" method="probed" conf="10"><cpe>cpe:/a:apache:http_server:2.4.58</cpe></service></port>
+<port protocol="tcp" portid="139"><state state="open" reason="tcp-response" reason_ttl="0"/><service name="netbios-ssn" product="Samba smbd" version="4" method="probed" conf="10"><cpe>cpe:/a:samba:samba:4</cpe></service></port>
+<port protocol="tcp" portid="445"><state state="open" reason="tcp-response" reason_ttl="0"/><service name="netbios-ssn" product="Samba smbd" version="4" method="probed" conf="10"><cpe>cpe:/a:samba:samba:4</cpe></service></port>
+</ports>
+<times srtt="2" rttvar="0" to="100000"/>
+</host>
+<runstats><finished time="1752544149" timestr="Mon Jul 14 20:49:09 2025" summary="Nmap done at Mon Jul 14 20:49:09 2025; 1 IP address (1 host up) scanned in 12.81 seconds" elapsed="12.81" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

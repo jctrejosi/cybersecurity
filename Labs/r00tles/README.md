@@ -1,6 +1,6 @@
 
 
-# r00tles (NIVEL MEDIO)
+# r00tles (NIVEL DIFÍCIL)
 
 ## 1. Escaneo de puertos y servicios:
 
@@ -788,6 +788,8 @@ root-false:x:1000:1000:root-false,,,:/home/root-false:/bin/bash
 less:x:1002:1002:less,,,:/home/less:/bin/bash
 passsamba:x:1003:1003:passsamba,,,:/home/passsamba:/bin/bash
 ```
+
+### Ingresamos a la terminal como root!!
 
 ```sh
 su -
