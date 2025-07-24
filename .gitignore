@@ -1,8 +1,9 @@
 # Ignorar todos los archivos .sh
 *.sh
 
-# Ignorar todos los archivos common.txt
+# Ignorar archivos comunes usados en explotación
 common.txt
+chisel
 
 # Ignorar todos los archivos .zip
 *.zip

