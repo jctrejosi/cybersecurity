@@ -1288,5 +1288,6 @@ whoami
 root
 ```
 
-
 y vemos que es root.
+
+**Finalizamos.**
