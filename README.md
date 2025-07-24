@@ -8,12 +8,12 @@ Solve [DockerLabs](https://dockerlabs.es/) challenges
 
 Below is a list of the machines I have resolved. Each machine has its own directory with a detailed README file.
 
-| Machine Name | Link to README | Description |
-|--------------|----------------|-------------|
-| [Crackoff](./Labs/Crackoff) | [README](./Labs/Crackoff/README.md) | Machine focused on **password cracking** practices (brute force, dictionary attacks, weak hashes). Perfect for learning tools like John the Ripper or Hashcat. |
-| [Mirame](./Labs/Mirame) | [README](./Labs/Mirame/README.md) | Web exploitation challenge with common vulnerabilities (SQLi, XSS, LFI). Great for diving into the **OWASP Top 10**. |
-| [PingPong](./Labs/PingPong) | [README](./Labs/PingPong/README.md) | Focused on network protocol attacks (**ICMP, UDP/TCP**) and host discovery techniques. Can you intercept the "game"? |
-| [r00tless](./Labs/r00tless) | [README](./Labs/r00tless/README.md) | Advanced **privilege escalation** machine (Linux/Windows). Exploit misconfigurations or vulnerable kernels to gain root access. |
+| Machine Name | Difficulty  | Link to README | Description |
+|--------------|-------------|----------------|-------------|
+| [r00tless](./Labs/r00tless) | Hard       | [README](./Labs/r00tless/README.md) | Advanced **privilege escalation** (Linux/Windows). Exploit misconfigurations or kernel vulnerabilities to gain root. |
+| [Crackoff](./Labs/Crackoff) | Hard       | [README](./Labs/Crackoff/README.md) | **Password cracking** practice (brute force, dictionaries, weak hashes). Ideal for learning tools like John the Ripper or Hashcat. |
+| [Mirame](./Labs/Mirame) | Easy       | [README](./Labs/Mirame/README.md) | Web exploitation challenge with common vulnerabilities (SQLi, XSS, LFI). Perfect introduction to **OWASP Top 10**. |
+| [PingPong](./Labs/PingPong) | Intermediate | [README](./Labs/PingPong/README.md) | Network protocol attacks (**ICMP, UDP/TCP**) and host discovery. Can you intercept the "game"? |
 
 - Each subdirectory under `/Labs` corresponds to a different machine.
 - The README file within each subdirectory provides detailed information about the solution and techniques used.
