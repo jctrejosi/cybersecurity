@@ -10,10 +10,10 @@ Below is a list of the machines I have resolved. Each machine has its own direct
 
 | Machine Name | Link to README | Description |
 |--------------|----------------|-------------|
-| [Crackoff](./Labs/Crackoff) | [README](./Labs/Crackoff/README.md) | Máquina orientada a prácticas de **password cracking** (fuerza bruta, diccionarios, hashes débiles). Ideal para aprender herramientas como John the Ripper o Hashcat. |
-| [Mirame](./Labs/Mirame) | [README](./Labs/Mirame/README.md) | Reto de explotación web con vulnerabilidades comunes (SQLi, XSS, LFI). Perfecto para introducirse en el **OWASP Top 10**. |
-| [PingPong](./Labs/PingPong) | [README](./Labs/PingPong/README.md) | Enfocada en ataques a protocolos de red (**ICMP, UDP/TCP**) y técnicas de host discovery. ¿Podrás interceptar el "juego"? |
-| [r00tless](./Labs/r00tless) | [README](./Labs/r00tless/README.md) | Máquina de **escalada de privilegios avanzada** (Linux/Windows). Explota malas configuraciones o kernels vulnerables para lograr acceso root. |
+| [Crackoff](./Labs/Crackoff) | [README](./Labs/Crackoff/README.md) | Machine focused on **password cracking** practices (brute force, dictionary attacks, weak hashes). Perfect for learning tools like John the Ripper or Hashcat. |
+| [Mirame](./Labs/Mirame) | [README](./Labs/Mirame/README.md) | Web exploitation challenge with common vulnerabilities (SQLi, XSS, LFI). Great for diving into the **OWASP Top 10**. |
+| [PingPong](./Labs/PingPong) | [README](./Labs/PingPong/README.md) | Focused on network protocol attacks (**ICMP, UDP/TCP**) and host discovery techniques. Can you intercept the "game"? |
+| [r00tless](./Labs/r00tless) | [README](./Labs/r00tless/README.md) | Advanced **privilege escalation** machine (Linux/Windows). Exploit misconfigurations or vulnerable kernels to gain root access. |
 
 - Each subdirectory under `/Labs` corresponds to a different machine.
 - The README file within each subdirectory provides detailed information about the solution and techniques used.
