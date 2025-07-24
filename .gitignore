@@ -1,0 +1,11 @@
+# Ignorar todos los archivos .sh
+*.sh
+
+# Ignorar todos los archivos common.txt
+common.txt
+
+# Ignorar todos los archivos .zip
+*.zip
+
+# Ignorar todos los archivos .tar
+*.tar
