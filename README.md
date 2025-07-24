@@ -2,11 +2,9 @@
 
 This course provides a comprehensive overview of information security, covering key concepts like data protection, threats, vulnerabilities, and the CIA triad. Students will explore security frameworks, endpoint and network protection, and learn to manage access, authentication, and incidents. The class also includes practical methodologies for implementing layered security and governance standards.
 
-## Table content
-
-- [Laboratories](./Labs/README.md) : Solve [DockerLabs](https://dockerlabs.es/) challenges
-
 ## Labs
+
+Solve [DockerLabs](https://dockerlabs.es/) challenges
 
 Below is a list of the machines I have resolved. Each machine has its own directory with a detailed README file.
 
